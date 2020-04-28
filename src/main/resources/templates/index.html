@@ -1,12 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Recipe App</title>
 </head>
 <body>
 
-<h1>Recipe list:768gjg</h1>
+<h2 th:text="'Recipe app'">Recipe app...</h2>
+
+<table class="table table-striped">
+    <tr>
+        <th style="width: 150px;">Id</th>
+        <th style="width: 150px;">Description</th>
+    </tr>
+    <tr th:each="recipe : ${recipes}">
+        <td th:text="${recipe.id}">12</td>
+        <td th:text="${recipe.description}">Tasty Recipe</td>
+    </tr>
+</table>
 
 </body>
 </html>
