@@ -4,13 +4,17 @@ import geo.springframework.recipeapp.domain.*;
 import geo.springframework.recipeapp.repositories.CategoryRepository;
 import geo.springframework.recipeapp.repositories.RecipeRepository;
 import geo.springframework.recipeapp.repositories.UnitOfMeasureRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
+@Slf4j
 @Component
 public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
@@ -27,11 +31,12 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
+        log.debug("I'm in bootstrap");
         recipeRepository.saveAll(getRecipes());
     }
 
     private List<Recipe> getRecipes() {
-        List<Recipe> recipes = new ArrayList<>();
+        List<Recipe> recipeList = new ArrayList<>();
 
         Recipe guacamoleRecipe = new Recipe();
 
@@ -74,15 +79,14 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
         Category american = americanOptional.get();
         Category mexican = mexicanOptional.get();
 
-        Set<Ingredient> ingredients = new HashSet<>();
-        ingredients.add(new Ingredient("ripe avocados", new BigDecimal(2), guacamoleRecipe, each));
-        ingredients.add(new Ingredient("Kosher salt", new BigDecimal(0.5), guacamoleRecipe, teaspoon));
-        ingredients.add(new Ingredient("fresh lime juice or lemon juice", new BigDecimal(2), guacamoleRecipe, tablespoon));
-        ingredients.add(new Ingredient("minced red onion or thinly sliced green onion", new BigDecimal(2), guacamoleRecipe, tablespoon));
-        ingredients.add(new Ingredient("serrano chiles, stems and seeds removed, minced", new BigDecimal(2), guacamoleRecipe, each));
-        ingredients.add(new Ingredient("Cilantro", new BigDecimal(2), guacamoleRecipe, tablespoon));
-        ingredients.add(new Ingredient("freshly grated black pepper", new BigDecimal(2), guacamoleRecipe, dash));
-        ingredients.add(new Ingredient("ripe tomato, seeds and pulp removed, chopped", new BigDecimal(0.5), guacamoleRecipe, each));
+        guacamoleRecipe.addIngredient(new Ingredient("ripe avocados", new BigDecimal(2), each));
+        guacamoleRecipe.addIngredient(new Ingredient("Kosher salt", new BigDecimal(0.5), teaspoon));
+        guacamoleRecipe.addIngredient(new Ingredient("fresh lime juice or lemon juice", new BigDecimal(2), tablespoon));
+        guacamoleRecipe.addIngredient(new Ingredient("minced red onion or thinly sliced green onion", new BigDecimal(2), tablespoon));
+        guacamoleRecipe.addIngredient(new Ingredient("serrano chiles, stems and seeds removed, minced", new BigDecimal(2), each));
+        guacamoleRecipe.addIngredient(new Ingredient("Cilantro", new BigDecimal(2), tablespoon));
+        guacamoleRecipe.addIngredient(new Ingredient("freshly grated black pepper", new BigDecimal(2), dash));
+        guacamoleRecipe.addIngredient(new Ingredient("ripe tomato, seeds and pulp removed, chopped", new BigDecimal(0.5), each));
 
         Notes gucamoleNotes = new Notes();
         gucamoleNotes.setRecipeNotes("For a very quick guacamole just take a 1/4 cup of salsa and mix it in with your mashed avocados.\\n\" +\n" +
@@ -93,12 +97,11 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
                 "                \"\\n\" +\n" +
                 "                \"Read more: http://www.simplyrecipes.com/recipes/perfect_guacamole/#ixzz4jvoun5ws\");\n");
 
-        gucamoleNotes.setRecipe(guacamoleRecipe);
+        guacamoleRecipe.addNotes(gucamoleNotes);
         guacamoleRecipe.setDescription("Perfect Guacamole");
         guacamoleRecipe.setPrepTime(10);
         guacamoleRecipe.setCookTime(10);
         guacamoleRecipe.setDifficulty(Difficulty.EASY);
-        guacamoleRecipe.setNotes(gucamoleNotes);
         guacamoleRecipe.setDirections("\"1 Cut avocado, remove flesh: Cut the avocados in half. Remove seed. Score the inside of the avocado with a blunt knife and scoop out the flesh with a spoon\" +\n" +
                 "                \"\\n\" +\n" +
                 "                \"2 Mash with a fork: Using a fork, roughly mash the avocado. (Don't overdo it! The guacamole should be a little chunky.)\" +\n" +
@@ -116,10 +119,9 @@ public class RecipeBootstrap implements ApplicationListener<ContextRefreshedEven
         guacamoleRecipe.setServings(4);
         guacamoleRecipe.setUrl("http://www.simplyrecipes.com/recipes/perfect_guacamole/");
         guacamoleRecipe.setSource("Simple Recipe");
-        guacamoleRecipe.setIngredients(ingredients);
 
-        recipes.add(guacamoleRecipe);
-        return recipes;
+        recipeList.add(guacamoleRecipe);
+        return recipeList;
     }
 
 }
