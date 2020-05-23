@@ -4,6 +4,7 @@ import geo.springframework.recipeapp.command.RecipeCommand;
 import geo.springframework.recipeapp.converters.RecipeCommandToRecipe;
 import geo.springframework.recipeapp.converters.RecipeToRecipeCommand;
 import geo.springframework.recipeapp.domain.Recipe;
+import geo.springframework.recipeapp.exceptions.NotFoundException;
 import geo.springframework.recipeapp.repositories.RecipeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,7 @@ public class RecipeServiceImpl implements RecipeService{
     public Recipe findById(Long id){
         Optional<Recipe> recipeOptional = recipeRepository.findById(id);
         if(!recipeOptional.isPresent()){
-            throw new RuntimeException("Recipe not found!");
+            throw new NotFoundException("Recipe not found!");
         }
         return recipeOptional.get();
     }
@@ -64,5 +65,10 @@ public class RecipeServiceImpl implements RecipeService{
     @Transactional
     public RecipeCommand findCommandById(Long id) {
         return recipeToRecipeCommand.convert(findById(id));
+    }
+
+    @Override
+    public void deleteById(Long id){
+        recipeRepository.deleteById(id);
     }
 }
